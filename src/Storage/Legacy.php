@@ -18,10 +18,12 @@ class Legacy extends Storage
         $prop->setAccessible(true);
         $app = $prop->getValue($this);
         $this->localeValues = $values;
-        
+
         $localeSlug = $app['translate.slug'];
+
         if (isset($values[$localeSlug . 'data'])) {
             $localeData = json_decode($values[$localeSlug . 'data'], true);
+
             if(is_array($localeData)){
                 foreach ($localeData as $key => $value) {
                     $values[$key] = is_array($value) ? json_encode($value) : $value;
@@ -51,6 +53,7 @@ class Legacy extends Storage
 
     public function getContent($textquery, $parameters = '', &$pager = [], $whereparameters = [])
     {
+
         $result = parent::getContent($textquery, $parameters, $pager, $whereparameters);
 
         if ($result) {
@@ -78,6 +81,7 @@ class Legacy extends Storage
         $contentType = $app['config']->get('contenttypes/' . $contentTypeName);
         
         $values = $this->localeValues;
+
         $localeSlug = $app['translate.slug'];
 
         if (isset($values[$localeSlug . 'data'])) {
@@ -85,6 +89,7 @@ class Legacy extends Storage
 
             if ($localeData !== null) {
                 foreach ($localeData as $key => $value) {
+
                     if ($key === 'templatefields' && !( $record['template']==Null && !isset($contentType['record_template']) )) {
                         if (isset($record['template']) && $record['template']==Null) {
                             $templateFields = $app['config']->get('theme/templatefields/' .  $contentType['record_template'] . '/fields');
@@ -112,7 +117,8 @@ class Legacy extends Storage
                             }
                         }
                     }
-                    if (isset($contentType['fields'][$key]) && $contentType['fields'][$key]['type'] === 'repeater') {
+
+                    if (isset($contentType['fields'][$key]) && $contentType['fields'][$key]['type'] === 'repeater' && $value !== null) {
                         /**
                         * Hackish fix until #5533 gets fixed, after that the
                         * following five (5) lines can be replaced with
@@ -127,6 +133,7 @@ class Legacy extends Storage
                         foreach ($value as $subValue) {
                             $record[$key]->addFromArray($subValue);
                         }
+
                     }
                 }
             }
